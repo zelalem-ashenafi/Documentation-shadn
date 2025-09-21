@@ -28,12 +28,12 @@ export default function RootLayout({
           <Header className="fixed top-0 left-0 right-0 h-8 z-50 border-b bg-white shadow-sm" />
 
           {/* Content below header */}
-          <div className="flex pt-16 h-full">
+          <div className="flex pt-16 h-full ">
             {/* Sidebar */}
             <AppSidebar />
 
             {/* Main content */}
-            <main className="flex-1 overflow-y-auto bg-gray-50 h-full">
+            <main className="flex-1 overflow-y-auto h-full">
               {children}
             </main>
           </div>

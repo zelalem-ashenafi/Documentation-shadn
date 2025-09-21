@@ -29,7 +29,7 @@ import { menuItems } from "./menuItems" // your constant from before
 
 export function AppSidebar() {
   return (
-    <Sidebar className="pt-14 w-64">
+    <Sidebar collapsible="icon" className="pt-14 w-64  bg-gray-50">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel >Departments</SidebarGroupLabel>

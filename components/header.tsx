@@ -1,8 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { Search, ChevronLeft } from "lucide-react"
+import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { SidebarTrigger } from "@/components/ui/sidebar" // ✅ import trigger
 
 type HeaderProps = {
   className?: string
@@ -28,7 +29,8 @@ export function Header({ className }: HeaderProps) {
 
         {/* Breadcrumb / Page title */}
         <div className="flex items-center gap-2 text-gray-600">
-          <ChevronLeft className="h-4 w-4" />
+          {/* Sidebar toggle button */}
+          <SidebarTrigger className="h-6 w-6 text-gray-600 hover:text-black" />
           <span className="font-medium">Documentation</span>
         </div>
       </div>
