@@ -17,8 +17,8 @@ export const menuItems: MenuItem[] = [
         title: "Conventional (Conv)",
         icon: Folder,
         children: [
-          { title: "Tables", url: "/branch/conv/tables", icon: FileText },
-          { title: "Account Classes", url: "/branch/conv/account-classes", icon: FileText },
+          { title: "Tables", url: "/branch-operation/conv/tables", icon: FileText },
+          { title: "Account Classes", url: "/branch-operation/conv/account-classes", icon: FileText },
         ],
       },
       {
