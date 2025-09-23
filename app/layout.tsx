@@ -21,23 +21,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geist.className} ${geistMono.variable} h-screen overflow-hidden`}
+        className={`${geist.className} ${geistMono.variable}  overflow-x-hidden`}
       >
-        <SidebarProvider>
-          {/* Header */}
-          <Header className="fixed top-0 left-0 right-0 h-8 z-50 border-b bg-white shadow-sm" />
+              <SidebarProvider >
+        {/* Header */}
+        <Header className="fixed top-0 left-0 right-0 h-8 z-50 border-b bg-white shadow-sm" />
 
-          {/* Content below header */}
-          <div className="flex pt-16 h-full ">
-            {/* Sidebar */}
-            <AppSidebar />
+        {/* Content below header */}
+        <div className="w-full flex pt-16 h-full justify-center">
+          {/* Sidebar */}
+          <AppSidebar />
 
-            {/* Main content */}
-            <main className="flex-1 overflow-y-auto h-full">
+          {/* Main content wrapper (centering applied here) */}
+          <main className="flex-1 pt-16 h-full  p-6">
+            
               {children}
-            </main>
-          </div>
-        </SidebarProvider>
+            
+          </main>
+        </div>
+      </SidebarProvider>
       </body>
     </html>
   );

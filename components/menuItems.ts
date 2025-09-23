@@ -1,5 +1,5 @@
 // src/data/menuItems.ts
-import { Home, Folder, FileText, Settings } from "lucide-react"
+import { Home, Folder, FileText, Settings, Building2, Banknote, MoonStar, Coins, LucideCircleDollarSign, LucideHandCoins, LucideSmartphoneNfc, LucideSmartphoneCharging, LucideSmartphone } from "lucide-react"
 
 export type MenuItem = {
   title: string
@@ -11,11 +11,11 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   {
     title: "Branch Operation",
-    icon: Home,
+    icon: Building2,
     children: [
       {
         title: "Conventional (Conv)",
-        icon: Folder,
+        icon: Banknote,
         children: [
           { title: "Tables", url: "/branch-operation/conv/tables", icon: FileText },
           { title: "Account Classes", url: "/branch-operation/conv/account-classes", icon: FileText },
@@ -23,10 +23,10 @@ export const menuItems: MenuItem[] = [
       },
       {
     title: "Interest-Free Banking (IFB)",
-    icon: Home,
+    icon: MoonStar,
     children: [
-      { title: "Tables", url: "/ifb/tables", icon: FileText },
-      { title: "Account Classes", url: "/ifb/account-classes", icon: FileText },
+      { title: "Tables", url: "/branch-operation/ifb/tables", icon: FileText },
+      { title: "Account Classes", url: "/branch-operation/ifb/account-classes", icon: FileText },
     ],
   },
     ],
@@ -34,7 +34,7 @@ export const menuItems: MenuItem[] = [
   
   {
     title: "Finance",
-    icon: Home,
+    icon: Coins,
     children: [
       { title: "Tables", url: "/finance/tables", icon: FileText },
       { title: "Account Classes", url: "/finance/account-classes", icon: FileText },
@@ -42,7 +42,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     title: "IBD (International Banking Department)",
-    icon: Home,
+    icon: LucideCircleDollarSign,
     children: [
       { title: "Tables", url: "/ibd/tables", icon: FileText },
       { title: "Account Classes", url: "/ibd/account-classes", icon: FileText },
@@ -50,7 +50,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     title: "Credit",
-    icon: Home,
+    icon: LucideHandCoins,
     children: [
       { title: "Tables", url: "/credit/tables", icon: FileText },
       { title: "Account Classes", url: "/credit/account-classes", icon: FileText },
@@ -58,10 +58,10 @@ export const menuItems: MenuItem[] = [
   },
   {
     title: "E-Banking",
-    icon: Home,
+    icon: LucideSmartphone,
     children: [
-      { title: "Tables", url: "/ebanking/tables", icon: FileText },
-      { title: "Account Classes", url: "/ebanking/account-classes", icon: FileText },
+      { title: "Tables", url: "/e-banking/tables", icon: FileText },
+      { title: "Account Classes", url: "/e-banking/account-classes", icon: FileText },
     ],
   },
   {

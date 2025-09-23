@@ -3,7 +3,8 @@
 import Image from "next/image"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { SidebarTrigger } from "@/components/ui/sidebar" // ✅ import trigger
+import { SidebarTrigger } from "@/components/ui/sidebar" 
+import Link from "next/link"
 
 type HeaderProps = {
   className?: string
@@ -18,13 +19,14 @@ export function Header({ className }: HeaderProps) {
       <div className="flex items-center gap-4">
         {/* Logo + Brand */}
         <div className="flex items-center gap-2">
+          <Link href="/">
           <Image
             src="/logo.png"
             alt="Wegagen Logo"
-            width={24}
-            height={24}
+            width={230}
+            height={48}
           />
-          <span className="font-semibold text-lg">Wegagen Bank SC</span>
+          </Link>
         </div>
 
         {/* Breadcrumb / Page title */}
