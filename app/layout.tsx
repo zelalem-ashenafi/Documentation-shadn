@@ -33,7 +33,7 @@ export default function RootLayout({
           <AppSidebar />
 
           {/* Main content wrapper (centering applied here) */}
-          <main className="flex-1 pt-16 h-full  p-6">
+          <main className="flex-1 pt-4 h-full  p-6">
             
               {children}
             

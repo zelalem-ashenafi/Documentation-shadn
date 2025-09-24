@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-export default function HomePage() {
-  return (
+import { usePathname } from "next/navigation"
+import DocPage from "./DocPage"
+function LandingPage() {
+  return(
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -115,4 +117,12 @@ export default function HomePage() {
     </main>
     </motion.div>
   )
+
+}
+
+export default function HomePage() {
+   
+    const pathname = usePathname()
+    return pathname === "/" ? <LandingPage /> : <DocPage />
+  
 }
