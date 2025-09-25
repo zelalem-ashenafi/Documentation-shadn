@@ -1,45 +1,80 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Header } from "@/components/header";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const geist = Geist({ subsets: ["latin"] });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
-
-export const metadata: Metadata = {
-  title: "Data Analytics Operations Documentation",
-  description: "Wegagen Bank SC",
-};
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [isReady, setIsReady] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+      if (pathname !== "/login") {
+        router.replace("/login"); // replace avoids back flicker
+      }
+    } else {
+      setIsLoggedIn(true);
+    }
+
+    setIsReady(true);
+  }, [pathname, router]);
+
+  // ⏳ Hold render until we know whether user is logged in
+  if (!isReady) {
+    return (
+      <html lang="en">
+        <body className={`${geist.className} ${geistMono.variable}`}>
+          <main className="flex items-center justify-center min-h-screen">
+            <p>Loading...</p>
+          </main>
+        </body>
+      </html>
+    );
+  }
+
+  const isAuthPage = pathname === "/login";
+
+  // 🔹 If not logged in and trying to access a protected page → don't render children
+  if (!isLoggedIn && !isAuthPage) {
+    return (
+      <html lang="en">
+        <body className={`${geist.className} ${geistMono.variable}`}>
+          <main className="flex items-center justify-center min-h-screen">
+            <p>Redirecting...</p>
+          </main>
+        </body>
+      </html>
+    );
+  }
+
+  // 🔹 Normal rendering
   return (
     <html lang="en">
-      <body
-        className={`${geist.className} ${geistMono.variable}  overflow-x-hidden`}
-      >
-              <SidebarProvider >
-        {/* Header */}
-        <Header className="fixed top-0 left-0 right-0 h-8 z-50 border-b bg-white shadow-sm" />
-
-        {/* Content below header */}
-        <div className="w-full flex pt-16 h-full justify-center">
-          {/* Sidebar */}
-          <AppSidebar />
-
-          {/* Main content wrapper (centering applied here) */}
-          <main className="flex-1 pt-4 h-full  p-6">
-            
-              {children}
-            
+      <body className={`${geist.className} ${geistMono.variable} overflow-x-hidden`}>
+        {isAuthPage ? (
+          <main className="flex items-center justify-center min-h-screen">
+            {children}
           </main>
-        </div>
-      </SidebarProvider>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );
