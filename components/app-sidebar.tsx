@@ -45,7 +45,7 @@ function renderMenu(content: any, basePath: string = "") {
                 <SidebarMenuButton>
                   <FolderArchive className="mr-2" />
                   <span className="text-xs capitalize">{key}</span>
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRight className="ml-auto transition-transform " />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
