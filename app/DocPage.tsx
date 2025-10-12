@@ -1,19 +1,49 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
-import { documentationContent, Section, TableContent } from "./content"
 import { CustomCodeBlock } from "@/components/codeBlock"
 import { ChevronRight } from "lucide-react"
 
 export default function DocPage() {
   const pathname = usePathname() // e.g. "/branch-operation/conv/account%20classes"
-  const pathParts = pathname.split("/").filter(Boolean).map(segment => decodeURIComponent(segment)) // ["branch-operation", "conv", "account classes"]
+  const [contentData, setContentData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Walk through nested object
-  let current: Section | TableContent[] | undefined = documentationContent
+  const pathParts = pathname
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => decodeURIComponent(segment)) // ["branch-operation", "conv", "account classes"]
+
+  // Fetch content from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/content")
+        if (!res.ok) throw new Error("Failed to load content")
+        const data = await res.json()
+        setContentData(data)
+      } catch (err: any) {
+        console.error("Error fetching content:", err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  // Handle loading / error
+  if (loading) return <p className="p-4 text-gray-500">Loading content...</p>
+  if (error) return <p className="p-4 text-red-500">{error}</p>
+  if (!contentData) return <p className="p-4 text-gray-500">No content available.</p>
+
+  // Walk through nested JSON using the path parts
+  let current: any = contentData
   for (const part of pathParts) {
     if (current && typeof current === "object" && part in current) {
-      current = (current as Section)[part]
+      current = current[part]
     } else {
       current = undefined
       break
@@ -34,14 +64,21 @@ export default function DocPage() {
     </div>
   )
 
+  // Handle case when no tables found
   if (!current || !Array.isArray(current)) {
-    return <p className="text-gray-600 p-4">No documentation found for this section.</p>
+    return (
+      <div className="p-6">
+        <Breadcrumb />
+        <p className="text-gray-600">No documentation found for this section.</p>
+      </div>
+    )
   }
 
+  // Render documentation
   return (
     <div className="p-6 space-y-8">
       <Breadcrumb />
-      {current.map((table, idx) => (
+      {current.map((table: any, idx: number) => (
         <div key={idx} className="border rounded-lg p-4 bg-white shadow-sm">
           <h2 className="text-xl font-semibold mb-2">{table.title}</h2>
           {table.description && table.description.trim() !== "" && (
@@ -51,7 +88,7 @@ export default function DocPage() {
             <>
               <h3 className="font-medium mb-2">Columns</h3>
               <ul className="list-disc list-inside space-y-1 mb-4">
-                {table.columns.map((col, i) => (
+                {table.columns.map((col: any, i: number) => (
                   <li key={i}>
                     <span className="font-mono text-sm">{col.name}</span> – {col.description}
                   </li>

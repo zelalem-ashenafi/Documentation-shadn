@@ -15,18 +15,40 @@ export function LoginForm({
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-    // 🔹 Simple check for now (replace with real Oracle DB/API call)
-    if (username === "wegagen" && password === "1234") {
-      localStorage.setItem("auth_token", "dummy_token"); // save token
-      router.push("/"); // redirect to homepage
-    } else {
-      setError("Invalid username or password");
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Save JWT token
+      localStorage.setItem("auth_token", data.token);
+
+      // ✅ Redirect to home (or another page)
+      router.push("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,7 +98,7 @@ export function LoginForm({
             </div>
           </form>
 
-          <div className="bg-muted relative hidden md:block border-l-2 my-8">
+          <div className="bg-white relative hidden md:block border-l-2 my-8">
             <img
               src="/Wegagen.jpg"
               alt="Image"

@@ -19,7 +19,7 @@ export default function HomePage() {
 
   if (loading) return <p></p>;
 
-  return <IndexLayout>
-      <LandingPage />
-    </IndexLayout>;
+  return (
+      <LandingPage />)
+    
 }

@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import IndexLayout from "./index-layout"
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({
   subsets: ["latin"],
@@ -68,12 +68,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.className} ${geistMono.variable} overflow-x-hidden`}>
+        
         {isAuthPage ? (
+           
           <main className="flex items-center justify-center min-h-screen">
-            {children}
+           {children}
           </main>
         ) : (
-          children
+        <IndexLayout>  {children}</IndexLayout>
         )}
       </body>
     </html>

@@ -1,5 +1,6 @@
-"use client"
+"use client";
 
+import React, { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,26 +12,23 @@ import {
   SidebarMenuButton,
   SidebarMenuSub,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 
-import { ChevronRight, FileText, FolderArchive } from "lucide-react"
-import Link from "next/link"
-import { documentationContent } from "@/app/content"
+import { ChevronRight, FileText, FolderArchive } from "lucide-react";
+import Link from "next/link";
 
-// Recursive renderer for menu items
 function renderMenu(content: any, basePath: string = "") {
   return Object.entries(content).map(([key, value]: [string, any]) => {
-    const path = `${basePath}/${key}`
+    const path = `${basePath}/${key}`;
 
     if (typeof value === "object" && value !== null) {
       if (Array.isArray(value)) {
-        // Leaf node: array (e.g., tables), render key as a link
         return (
           <SidebarMenuSubItem key={path}>
             <Link href={path} className="w-full flex items-center">
@@ -38,9 +36,8 @@ function renderMenu(content: any, basePath: string = "") {
               <span className="text-xs">{key}</span>
             </Link>
           </SidebarMenuSubItem>
-        )
+        );
       } else {
-        // Nested section: render collapsible and recurse
         return (
           <Collapsible key={path} className="group/collapsible text-sm">
             <SidebarMenuItem className="text-xs">
@@ -56,27 +53,52 @@ function renderMenu(content: any, basePath: string = "") {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
-        )
+        );
       }
     }
-    // Ignore non-object values, assuming structure is consistent
-    return null
-  })
+    return null;
+  });
 }
 
 export function AppSidebar() {
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const res = await fetch("/api/content");
+        const data = await res.json();
+        
+        setContent(data);
+      } catch (err) {
+        console.error("Error loading content:", err);
+      }
+    }
+    fetchContent();
+  }, []);
+
+  if (!content) {
+    return (
+      <Sidebar collapsible="icon" className="pt-14 w-64 bg-gray-50">
+        <SidebarContent>
+          <p className="p-4 text-xs text-gray-500">Loading...</p>
+        </SidebarContent>
+      </Sidebar>
+    );
+  }
+
   return (
-    <Sidebar collapsible="icon" className="pt-14 w-64 bg-gray-100">
+    <Sidebar collapsible="icon" className="pt-14 w-64 bg-gray-50">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Departments</SidebarGroupLabel>
           <SidebarGroupContent className="text-xs">
             <SidebarMenu className="text-xs">
-              {renderMenu(documentationContent)}
+              {renderMenu(content)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
