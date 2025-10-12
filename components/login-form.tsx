@@ -74,7 +74,7 @@ export function LoginForm({
                 <Input
                   id="username"
                   type="text"
-                  placeholder="wegagenbanksc\username"
+                  placeholder="wegagenbanksc\\username"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -92,8 +92,12 @@ export function LoginForm({
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-[#e65f05]">
-                Login
+              <Button
+                type="submit"
+                disabled={loading}
+                className="cursor-pointer w-full bg-[#e65f05]"
+              >
+                {loading ? "Logging in..." : "Login"}
               </Button>
             </div>
           </form>
