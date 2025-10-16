@@ -100,8 +100,9 @@ function LandingPage() {
           </CardContent>
         </Card>
         </Link>
-        {/* Reports */}
-        <Card className="bg-gradient-to-r from-pink-100 to-pink-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105">
+        {/* IBD */}
+        <Link href="/IBD/tables" className="h-full ">
+        <Card className="bg-gradient-to-r  from-orange-100 to-red-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105 h-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <LucideBadgeDollarSign className="h-6 w-6 text-pink-700" />
@@ -109,9 +110,12 @@ function LandingPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700">Generate and review organizational and operational reports.</p>
+            <p className="text-gray-700">Data related with International Banking, Buying and Selling, Currency Rate <br/><br/><br/><br/></p>
           </CardContent>
         </Card>
+        </Link>
+        
+        
       </div>
       </div>
     </main>

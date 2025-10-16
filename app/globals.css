@@ -120,3 +120,11 @@
     @apply bg-background text-foreground;
   }
 }
+code span{
+  
+  overflow-x: auto;     /* enable horizontal scrolling */
+  max-height: 20rem;    /* optional: limit height */
+    
+  scrollbar-width: thin;
+  max-width: 100%;
+}
