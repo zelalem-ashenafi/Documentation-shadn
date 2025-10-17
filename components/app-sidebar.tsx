@@ -23,61 +23,108 @@ import {
 import { ChevronRight, FileText, FolderArchive } from "lucide-react";
 import Link from "next/link";
 
+// --------------------
+// Helper to structure layout data
+// --------------------
+function groupLayoutData(layoutData: any[]) {
+  const structure: any = {};
+
+  layoutData.forEach((row) => {
+    const { main_tab, sub_section, page_name } = row;
+
+    if (!structure[main_tab]) structure[main_tab] = {};
+
+    // If sub_section exists, nest it
+    if (sub_section && sub_section.trim() !== "") {
+  if (!structure[main_tab][sub_section]) structure[main_tab][sub_section] = {};
+  if (!structure[main_tab][sub_section]._pages) structure[main_tab][sub_section]._pages = [];
+  structure[main_tab][sub_section]._pages.push(page_name);
+} else {
+  // no subsection, push page directly
+  if (!structure[main_tab]["_pages"]) structure[main_tab]["_pages"] = [];
+  structure[main_tab]["_pages"].push(page_name);
+}
+
+  });
+
+  return structure;
+}
+
+// --------------------
+// Render function for menu
+// --------------------
 function renderMenu(content: any, basePath: string = "") {
   return Object.entries(content).map(([key, value]: [string, any]) => {
+    
+    if (key === "_pages" && Array.isArray(value)) {
+    // Render pages at current basePath (do not append '_pages' to path)
+    return value.map((page) => (
+      <SidebarMenuSubItem key={`${basePath}/${page}`}>
+        <Link href={`${basePath}/${page}`} className="w-full flex items-center">
+          <FileText size={15} className="mr-2" />
+          <span className="text-xs capitalize">{page}</span>
+        </Link>
+      </SidebarMenuSubItem>
+    ));
+  }
     const path = `${basePath}/${key}`;
-
-    if (typeof value === "object" && value !== null) {
-      if (Array.isArray(value)) {
-        return (
-          <SidebarMenuSubItem key={path}>
-            <Link href={path} className="w-full flex items-center">
-              <FileText size={15} className="mr-2" />
-              <span className="text-xs">{key}</span>
-            </Link>
-          </SidebarMenuSubItem>
-        );
-      } else {
-        return (
-          <Collapsible key={path} className="group/collapsible text-sm">
-            <SidebarMenuItem className="text-xs">
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <FolderArchive className="mr-2" />
-                  <span className="text-xs capitalize">{key}</span>
-                  <ChevronRight className="ml-auto transition-transform " />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>{renderMenu(value, path)}</SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        );
-      }
+    // If subsection has pages
+    if (Array.isArray(value)) {
+      return (
+        <SidebarMenuSubItem key={path}>
+          <Link href={path} className="w-full flex items-center">
+            <FileText size={15} className="mr-2" />
+            <span className="text-xs capitalize">{key}</span>
+          </Link>
+        </SidebarMenuSubItem>
+      );
     }
+
+    // If nested object (main_tab or sub_section with children)
+    if (typeof value === "object") {
+      return (
+        <Collapsible key={path} className="group/collapsible text-sm">
+          <SidebarMenuItem className="text-xs">
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton>
+                <FolderArchive className="mr-2" />
+                <span className="text-xs capitalize">{key}</span>
+                <ChevronRight className="ml-auto transition-transform" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>{renderMenu(value, path)}</SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      );
+    }
+
     return null;
   });
 }
 
+// --------------------
+// Main Sidebar Component
+// --------------------
 export function AppSidebar() {
-  const [content, setContent] = useState<any>(null);
+  const [layout, setLayout] = useState<any>(null);
 
   useEffect(() => {
-    async function fetchContent() {
+    async function fetchLayout() {
       try {
-        const res = await fetch("/api/content");
+        const res = await fetch("/api/layout");
         const data = await res.json();
-        
-        setContent(data);
+        const structured = groupLayoutData(data);
+        setLayout(structured);
       } catch (err) {
-        console.error("Error loading content:", err);
+        console.error("Error loading layout:", err);
       }
     }
-    fetchContent();
+    fetchLayout();
   }, []);
 
-  if (!content) {
+  if (!layout) {
     return (
       <Sidebar collapsible="icon" className="pt-14 w-64 bg-gray-50">
         <SidebarContent>
@@ -94,7 +141,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Departments</SidebarGroupLabel>
           <SidebarGroupContent className="text-xs">
             <SidebarMenu className="text-xs">
-              {renderMenu(content)}
+              {renderMenu(layout)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
