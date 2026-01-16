@@ -6,9 +6,22 @@ import { CustomCodeBlock } from "@/components/codeBlock"
 import { ChevronRight } from "lucide-react"
 import sqlFormatter from "@sqltools/formatter"
 
+// Define the types for your data
+interface Column {
+  name: string
+  description?: string
+}
+
+interface Section {
+  section_title: string
+  description?: string
+  columns?: Column[]
+  sqlquery?: string
+}
+
 export default function DocPage() {
   const pathname = usePathname()
-  const [sections, setSections] = useState<any[]>([])
+  const [sections, setSections] = useState<Section[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,18 +50,24 @@ export default function DocPage() {
 
         const res = await fetch(`/api/content?${params.toString()}`)
         if (!res.ok) throw new Error(`Failed to fetch content: ${res.status}`)
-        const data = await res.json()
+        const data: Section[] = await res.json()
         setSections(data)
-      } catch (err: any) {
-        console.error("Fetch error:", err)
-        setError(err.message)
+      } catch (err: unknown) {
+        // Type-safe error handling
+        if (err instanceof Error) {
+          console.error("Fetch error:", err)
+          setError(err.message)
+        } else {
+          console.error("Unexpected fetch error:", err)
+          setError(String(err))
+        }
       } finally {
         setLoading(false)
       }
     }
 
     fetchSections()
-  }, [pathname])
+  }, [main_tab, page_name, sub_section]) // fixed useEffect dependencies
 
   // Breadcrumb display
   const Breadcrumb = () => (
@@ -56,9 +75,7 @@ export default function DocPage() {
       {pathParts.map((segment, index) => (
         <div key={index} className="flex items-center">
           <span className="capitalize">{decodeURIComponent(segment.replace(/-/g, " "))}</span>
-          {index < pathParts.length - 1 && (
-            <ChevronRight className="mx-2 h-4 w-4" />
-          )}
+          {index < pathParts.length - 1 && <ChevronRight className="mx-2 h-4 w-4" />}
         </div>
       ))}
     </div>
@@ -88,15 +105,13 @@ export default function DocPage() {
       {sections.map((section, idx) => (
         <div key={idx} className="border rounded-lg p-4 bg-white shadow-sm">
           <h2 className="text-lg font-semibold mb-2">{section.section_title}</h2>
-          {section.description && (
-            <p className="text-gray-600 mb-4">{section.description}</p>
-          )}
+          {section.description && <p className="text-gray-600 mb-4">{section.description}</p>}
 
           {section.columns && section.columns.length > 0 && (
             <>
               <h3 className="font-medium mb-2">Columns</h3>
               <ul className="list-disc list-inside space-y-1 mb-4">
-                {section.columns.map((col: any, i: number) => (
+                {section.columns.map((col, i) => (
                   <li key={i}>
                     <span className="font-mono text-sm text-gray-800">{col.name}</span>
                     {col.description && <span className="text-gray-500"> – {col.description}</span>}

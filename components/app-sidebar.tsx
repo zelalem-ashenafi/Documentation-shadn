@@ -24,64 +24,74 @@ import { ChevronRight, FileText, FolderArchive } from "lucide-react";
 import Link from "next/link";
 
 // --------------------
+// Types
+// --------------------
+
+// Each node can have _pages and nested subsections
+interface SectionNode {
+  _pages?: string[];
+  [subSection: string]: SectionNode | string[] | undefined;
+}
+
+// Top-level layout structure: main_tab -> SectionNode
+interface LayoutStructure {
+  [mainTab: string]: SectionNode;
+}
+
+// Raw layout items from API
+interface LayoutItem {
+  main_tab: string;
+  sub_section?: string;
+  page_name: string;
+}
+
+// --------------------
 // Helper to structure layout data
 // --------------------
-function groupLayoutData(layoutData: any[]) {
-  const structure: any = {};
+function groupLayoutData(layoutData: LayoutItem[]): LayoutStructure {
+  const structure: LayoutStructure = {};
 
   layoutData.forEach((row) => {
     const { main_tab, sub_section, page_name } = row;
 
     if (!structure[main_tab]) structure[main_tab] = {};
 
-    // If sub_section exists, nest it
     if (sub_section && sub_section.trim() !== "") {
-  if (!structure[main_tab][sub_section]) structure[main_tab][sub_section] = {};
-  if (!structure[main_tab][sub_section]._pages) structure[main_tab][sub_section]._pages = [];
-  structure[main_tab][sub_section]._pages.push(page_name);
-} else {
-  // no subsection, push page directly
-  if (!structure[main_tab]["_pages"]) structure[main_tab]["_pages"] = [];
-  structure[main_tab]["_pages"].push(page_name);
-}
-
+      if (!structure[main_tab][sub_section]) structure[main_tab][sub_section] = {};
+      const subNode = structure[main_tab][sub_section] as SectionNode;
+      if (!subNode._pages) subNode._pages = [];
+      subNode._pages.push(page_name);
+    } else {
+      const mainNode = structure[main_tab];
+      if (!mainNode._pages) mainNode._pages = [];
+      mainNode._pages.push(page_name);
+    }
   });
 
   return structure;
 }
 
 // --------------------
-// Render function for menu
+// Render function for menu recursively
 // --------------------
-function renderMenu(content: any, basePath: string = "") {
-  return Object.entries(content).map(([key, value]: [string, any]) => {
-    
+function renderMenu(content: SectionNode, basePath: string = "") {
+  return Object.entries(content).map(([key, value]) => {
+    // _pages array at current level
     if (key === "_pages" && Array.isArray(value)) {
-    // Render pages at current basePath (do not append '_pages' to path)
-    return value.map((page) => (
-      <SidebarMenuSubItem key={`${basePath}/${page}`}>
-        <Link href={`${basePath}/${page}`} className="w-full flex items-center">
-          <FileText size={15} className="mr-2" />
-          <span className="text-xs capitalize">{page}</span>
-        </Link>
-      </SidebarMenuSubItem>
-    ));
-  }
-    const path = `${basePath}/${key}`;
-    // If subsection has pages
-    if (Array.isArray(value)) {
-      return (
-        <SidebarMenuSubItem key={path}>
-          <Link href={path} className="w-full flex items-center">
+      return value.map((page) => (
+        <SidebarMenuSubItem key={`${basePath}/${page}`}>
+          <Link href={`${basePath}/${page}`} className="w-full flex items-center">
             <FileText size={15} className="mr-2" />
-            <span className="text-xs capitalize">{key}</span>
+            <span className="text-xs capitalize">{page}</span>
           </Link>
         </SidebarMenuSubItem>
-      );
+      ));
     }
 
-    // If nested object (main_tab or sub_section with children)
-    if (typeof value === "object") {
+    const path = `${basePath}/${key}`;
+
+    // Nested object (subsection)
+    if (typeof value === "object" && value !== null) {
       return (
         <Collapsible key={path} className="group/collapsible text-sm">
           <SidebarMenuItem className="text-xs">
@@ -93,7 +103,7 @@ function renderMenu(content: any, basePath: string = "") {
               </SidebarMenuButton>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <SidebarMenuSub>{renderMenu(value, path)}</SidebarMenuSub>
+              <SidebarMenuSub>{renderMenu(value as SectionNode, path)}</SidebarMenuSub>
             </CollapsibleContent>
           </SidebarMenuItem>
         </Collapsible>
@@ -108,19 +118,21 @@ function renderMenu(content: any, basePath: string = "") {
 // Main Sidebar Component
 // --------------------
 export function AppSidebar() {
-  const [layout, setLayout] = useState<any>(null);
+  const [layout, setLayout] = useState<LayoutStructure | null>(null);
 
   useEffect(() => {
     async function fetchLayout() {
       try {
         const res = await fetch("/api/layout");
-        const data = await res.json();
+        const data: LayoutItem[] = await res.json();
         const structured = groupLayoutData(data);
         setLayout(structured);
-      } catch (err) {
-        console.error("Error loading layout:", err);
+      } catch (err: unknown) {
+        if (err instanceof Error) console.error("Error loading layout:", err.message);
+        else console.error("Unexpected error loading layout:", err);
       }
     }
+
     fetchLayout();
   }, []);
 
@@ -140,9 +152,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Departments</SidebarGroupLabel>
           <SidebarGroupContent className="text-xs">
-            <SidebarMenu className="text-xs">
-              {renderMenu(layout)}
-            </SidebarMenu>
+            <SidebarMenu className="text-xs">{renderMenu(layout)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

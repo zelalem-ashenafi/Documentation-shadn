@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
-export async function GET(req) {
+export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const main_tab = decodeURIComponent(searchParams.get("main_tab") || "");
@@ -15,7 +15,7 @@ export async function GET(req) {
     }
 
     // SQL with optional sub_section filtering
-    let sql = `
+    const sql = `
       SELECT 
         s.section_id,
         s.section_title,
@@ -58,6 +58,6 @@ export async function GET(req) {
     return NextResponse.json(formattedRows, { status: 200 });
   } catch (err) {
     console.error("DB Error in /api/content:", err);
-    return NextResponse.json({ error: "Internal Server Error", details: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error", details:   err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
