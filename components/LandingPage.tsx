@@ -49,17 +49,17 @@ function LandingPage() {
             <p className="text-gray-700">Manage conventional and Islamic (IFB) banking operations.</p>
             <div className="flex gap-3">
               <Button variant="default" className="flex-1">
-                <Link href="/branch-operation/conv/tables" className="w-full h-full">Conv</Link>
+                <Link href="/Branch%20Operation/CONV/Tables" className="w-full h-full">Conv</Link>
                 </Button>
               <Button variant="secondary" className="flex-1">
-                <Link href="/branch-operation/ifb/tables" className="w-full h-full">IFB</Link>
+                <Link href="/Branch%20Operation/IFB/Tables" className="w-full h-full">IFB</Link>
               </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Credit */}
-        <Link href="/credit/tables" className="h-full" >  
+        <Link href="/Credit/Tables" className="h-full" >  
         <Card  className=" bg-gradient-to-r from-green-100 to-green-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105 h-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -73,7 +73,7 @@ function LandingPage() {
         </Card>
         </Link>
         {/* E-Banking */}
-        <Link href="/e-banking/tables">
+        <Link href="/E-Banking/Tables">
         <Card className="bg-gradient-to-r from-orange-100 to-orange-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105 h-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -87,7 +87,7 @@ function LandingPage() {
         </Card>
         </Link>
         {/* Finance */}
-        <Link href="/finance/tables" className="h-full ">
+        <Link href="/Finance/Tables" className="h-full ">
         <Card className="bg-gradient-to-r from-purple-100 to-purple-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105 h-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -101,7 +101,7 @@ function LandingPage() {
         </Card>
         </Link>
         {/* IBD */}
-        <Link href="/IBD/tables" className="h-full ">
+        <Link href="/IBD/Tables" className="h-full ">
         <Card className="bg-gradient-to-r  from-orange-100 to-red-200 rounded-2xl shadow-md cursor-pointer transition-all hover:shadow-lg hover:scale-105 h-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
