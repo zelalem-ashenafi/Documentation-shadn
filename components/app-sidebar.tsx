@@ -155,6 +155,35 @@ export function AppSidebar() {
             <SidebarMenu className="text-xs">{renderMenu(layout)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarGroup>
+  <SidebarGroupLabel>Report Catalogs</SidebarGroupLabel>
+  <SidebarGroupContent>
+    <SidebarMenu>
+
+      <SidebarMenuSubItem key={'/catalog/70'}>
+          <Link href={'/catalog/70'} className="w-full flex items-center">
+            <FileText size={15} className="mr-2" />
+            <span className="text-xs capitalize">{'70(new!)'}</span>
+          </Link>
+        </SidebarMenuSubItem> 
+      <SidebarMenuSubItem key={'/catalog/99'}>
+          <Link href={'/catalog/99'} className="w-full flex items-center">
+            <FileText size={15} className="mr-2" />
+            <span className="text-xs capitalize">{'99'}</span>
+          </Link>
+        </SidebarMenuSubItem>
+      <SidebarMenuSubItem key={'/catalog/126'}>
+          <Link href={'/catalog/126'} className="w-full flex items-center">
+            <FileText size={15} className="mr-2" />
+            <span className="text-xs capitalize">{'126'}</span>
+          </Link>
+        </SidebarMenuSubItem>
+
+      
+
+    </SidebarMenu>
+  </SidebarGroupContent>
+</SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );
